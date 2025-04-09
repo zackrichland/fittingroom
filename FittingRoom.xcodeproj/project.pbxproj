@@ -16,6 +16,7 @@
 		8B1234561234567800000013 /* WardrobeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1234561234567800000014 /* WardrobeItem.swift */; };
 		8B1234561234567800000015 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1234561234567800000016 /* PrimaryButton.swift */; };
 		8B1234561234567800000017 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1234561234567800000018 /* ImagePicker.swift */; };
+		8B1234561234567800000019 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1234561234567800000034 /* OpenAIService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

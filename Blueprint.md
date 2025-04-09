@@ -1,4 +1,6 @@
-# FittingRoom.ai - Project Blueprint
+# FittingRoom App Blueprint
+
+Repository: https://github.com/zackrichland/fittingroom
 
 ## Project Overview
 FittingRoom.ai is an iOS application that provides a virtual fitting room experience, allowing users to upload selfies and wardrobe items to generate AI-powered outfit recommendations.

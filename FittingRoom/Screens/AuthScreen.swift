@@ -4,6 +4,7 @@ struct AuthScreen: View {
     @Binding var isAuthenticated: Bool
     @State private var email = ""
     @State private var password = ""
+    @EnvironmentObject private var authManager: AuthManager
     
     var body: some View {
         VStack(spacing: 30) {
@@ -35,9 +36,9 @@ struct AuthScreen: View {
                     .cornerRadius(8)
                 
                 Button(action: {
-                    // TODO: Implement actual authentication logic
+                    // For now, just sign in without validation
                     withAnimation {
-                        isAuthenticated = true
+                        authManager.signIn()
                     }
                 }) {
                     Text("Sign In")
@@ -83,4 +84,5 @@ struct AuthScreen: View {
 
 #Preview {
     AuthScreen(isAuthenticated: .constant(false))
+        .environmentObject(AuthManager())
 } 

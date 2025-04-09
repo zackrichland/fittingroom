@@ -41,18 +41,19 @@ struct HomeScreen: View {
                                 }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 24)
-                                            .fill(Color(.systemGray6).opacity(0.1))
+                                            .fill(Color(.systemGray6).opacity(0.15))
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 24)
-                                                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+                                                    .strokeBorder(Color.white.opacity(0.3), lineWidth: 2)
                                             )
-                                            .frame(height: 250)
+                                            .frame(height: 300)
+                                            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                                         
-                                        VStack(spacing: 16) {
+                                        VStack(spacing: 20) {
                                             Image(systemName: "camera.fill")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
-                                                .frame(width: 40, height: 40)
+                                                .frame(width: 50, height: 50)
                                                 .foregroundColor(.white)
                                                 .padding()
                                                 .background(Color.blue)
@@ -61,10 +62,11 @@ struct HomeScreen: View {
                                                 .animation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
                                             
                                             Text("Upload Photo")
-                                                .font(.headline)
+                                                .font(.title2)
+                                                .fontWeight(.bold)
                                                 .foregroundColor(.white)
                                             
-                                            Text("Take a photo or choose from your library")
+                                            Text("Take a photo of yourself or choose from your library")
                                                 .font(.subheadline)
                                                 .foregroundColor(.gray)
                                                 .multilineTextAlignment(.center)
@@ -99,7 +101,7 @@ struct HomeScreen: View {
                         // Your clothes section
                         VStack(alignment: .leading, spacing: 15) {
                             HStack {
-                                Text("Your clothes")
+                                Text("Your Clothes")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
@@ -115,7 +117,41 @@ struct HomeScreen: View {
                                 }
                             }
                             
-                            if !selectedItems.isEmpty {
+                            if selectedItems.isEmpty {
+                                Button(action: {
+                                    showClothesActionSheet = true
+                                }) {
+                                    VStack(spacing: 16) {
+                                        Image(systemName: "tshirt.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 40, height: 40)
+                                            .foregroundColor(.blue)
+                                            .padding()
+                                            .background(Color.white.opacity(0.1))
+                                            .clipShape(Circle())
+                                        
+                                        Text("No clothes selected")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                        
+                                        Text("Add clothes to see how they look on you")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 40)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 24)
+                                            .fill(Color(.systemGray6).opacity(0.1))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 24)
+                                                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+                                            )
+                                    )
+                                }
+                            } else {
                                 LazyVGrid(columns: [
                                     GridItem(.flexible()),
                                     GridItem(.flexible())
@@ -148,20 +184,21 @@ struct HomeScreen: View {
                                                     showWardrobePicker = true
                                                 }) {
                                                     ZStack {
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .fill(Color(.systemGray6).opacity(0.1))
+                                                        RoundedRectangle(cornerRadius: 16)
+                                                            .fill(Color(.systemGray6).opacity(0.15))
                                                             .frame(height: 150)
                                                             .overlay(
-                                                                RoundedRectangle(cornerRadius: 12)
-                                                                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+                                                                RoundedRectangle(cornerRadius: 16)
+                                                                    .strokeBorder(Color.white.opacity(0.3), lineWidth: 1)
                                                             )
+                                                            .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                                                         
-                                                        VStack(spacing: 8) {
+                                                        VStack(spacing: 12) {
                                                             Image(systemName: "plus.circle")
-                                                                .font(.title2)
+                                                                .font(.title)
                                                                 .foregroundColor(.blue)
                                                             Text("Add \(category.rawValue)")
-                                                                .font(.subheadline)
+                                                                .font(.headline)
                                                                 .foregroundColor(.blue)
                                                         }
                                                     }
@@ -170,36 +207,6 @@ struct HomeScreen: View {
                                         }
                                     }
                                 }
-                            } else {
-                                VStack(spacing: 16) {
-                                    Image(systemName: "tshirt.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 40, height: 40)
-                                        .foregroundColor(.blue)
-                                        .padding()
-                                        .background(Color.white.opacity(0.1))
-                                        .clipShape(Circle())
-                                    
-                                    Text("No clothes selected")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    
-                                    Text("Add clothes to see how they look on you")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .multilineTextAlignment(.center)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 40)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 24)
-                                        .fill(Color(.systemGray6).opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 24)
-                                                .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
-                                        )
-                                )
                             }
                         }
                         
@@ -264,6 +271,14 @@ struct HomeScreen: View {
                         wardrobeManager.addItem(newItem)
                         selectedItems[newItem.category] = newItem
                     })
+                }
+            }
+            .sheet(isPresented: $showGeneratedResult) {
+                NavigationView {
+                    GeneratedResultScreen(
+                        selfie: selectedImage!,
+                        items: Array(selectedItems.values)
+                    )
                 }
             }
             .onAppear {

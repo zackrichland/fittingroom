@@ -1,3 +1,15 @@
+# FittingRoom App Development Workshop
+
+Repository: https://github.com/zackrichland/fittingroom
+
+## Recent Changes (April 9, 2024)
+- Added "Looks" tab for saved outfit history
+- Created Look model with image, items, and timestamp
+- Implemented LookManager for state management
+- Added grid layout for saved looks with delete functionality
+- Resolved module import issues by temporarily consolidating code in FittingRoomApp.swift
+- TODO: Move Look model and LooksScreen to separate files once module issues are resolved
+
 # FittingRoom.ai - Workshop Notes
 
 ## Initial Implementation (Current)
@@ -103,4 +115,46 @@
 - SwiftUI documentation: https://developer.apple.com/documentation/swiftui
 - PhotosUI documentation: https://developer.apple.com/documentation/photosui
 - Firebase documentation (for future auth): https://firebase.google.com/docs
-- Core ML documentation (for future AI): https://developer.apple.com/documentation/coreml 
+- Core ML documentation (for future AI): https://developer.apple.com/documentation/coreml
+
+Workshop Changes - Session Notes
+
+1. Project Structure Cleanup
+   - Moved OpenAIService into FittingRoomApp.swift for better integration
+   - Removed Services directory to simplify structure
+   - Updated project file references to reflect new organization
+   - Fixed file dependencies and imports
+
+2. Authentication Flow Improvements
+   - Added AuthManager as ObservableObject to handle auth state
+   - Implemented proper environment object injection
+   - Fixed navigation between AuthScreen and main TabView
+   - Added signIn/signOut functionality
+
+3. WardrobeScreen Modernization
+   - Updated to iOS 16+ NavigationAPI (removed deprecated NavigationLink)
+   - Created WardrobeItemCard component for consistent item display
+   - Added AddItemCard component for the add button
+   - Fixed item addition callback flow
+
+4. OpenAI Integration Preparation
+   - Set up OpenAIService singleton structure
+   - NOTE: Will update from "dall-e-3" to appropriate 4o model when available
+   - Prepared prompt engineering for outfit generation:
+     * Main prompt focuses on photorealistic integration
+     * Negative prompt handles common generation issues
+   - Request structure ready with:
+     * HD quality settings
+     * 1024x1024 size
+     * Base64 image handling for selfie and wardrobe items
+   - Currently returns placeholder image (original selfie) until API integration
+
+5. UI/UX Improvements (Latest)
+   - Updated WardrobeScreen to use dropdown category selector
+   - Removed mock wardrobe data for clean start
+   - Made empty state card in HomeScreen clickable to add clothes
+   - Fixed text capitalization ("Your Clothes")
+   - Updated selfie prompt to "Take a photo of yourself or choose from your library"
+
+Status: App is running with working auth flow and wardrobe management. 
+Next: Awaiting API key and correct model endpoint for final integration. 
