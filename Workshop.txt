@@ -158,3 +158,17 @@ Workshop Changes - Session Notes
 
 Status: App is running with working auth flow and wardrobe management. 
 Next: Awaiting API key and correct model endpoint for final integration. 
+
+## Training Function Debugging Notes (Date: <Current Date>)
+
+*   **Fal API Key Secret (`FAL_API_KEY`):**
+    *   Fal provides keys in `id:secret` format.
+    *   When using `supabase secrets set FAL_API_KEY=id:value`, MUST wrap the value in **single quotes** (e.g., `'id:value'`) to prevent shell misinterpreting the colon.
+    *   Secret must be stored in **Edge Function Secrets** (via CLI or UI), NOT the Vault.
+    *   `Deno.env.get("FAL_API_KEY")` failed to read the value if the colon caused issues during `set`.
+*   **Fal Training Payload (`fal-ai/flux-lora-fast-training`):
+    *   Requires `images_data_url` input field.
+    *   Value MUST be a **single string URL pointing to a ZIP archive** containing the training images (and optional captions/masks).
+    *   Sending an array of image URLs directly causes a 422 ValidationError (`str type expected`).
+*   **Function Workflow:** Receive signed URLs -> Download images -> Create ZIP -> Upload ZIP to `fal.storage` -> Call `fal.subscribe` with `images_data_url: <zipUrl>`.
+*   **App Timeout:** iOS app needs increased `request.timeoutInterval` (e.g., 180s) for the call to the training function, as the function's zip/upload process can exceed the default 60s before returning the submission confirmation. 

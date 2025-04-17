@@ -60,5 +60,11 @@
 	<string>We need access to your photos to upload selfies and wardrobe items.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take selfies and photos of your wardrobe items.</string>
+	<key>SUPABASE_URL</key>
+	<string>https://ygdbjyhtlzdkwhczvfpb.supabase.co</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlnZGJqeWh0bHpka3doY3p2ZnBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyMzcxNzEsImV4cCI6MjA1OTgxMzE3MX0.3Sw1EX8CxqZntQAvN7FzkbiND9dGCANG1RqU_UlmPo8</string>
+	<key>CFBundleDisplayName</key>
+	<string>SLAY</string>
 </dict>
-</plist> 
+</plist>

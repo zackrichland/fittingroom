@@ -5,13 +5,23 @@ struct WardrobeScreen: View {
     @State private var showAddItem = false
     @State private var selectedCategory: WardrobeCategory = .top
     
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "1a1a1a").edgesIgnoringSafeArea(.all)
+                Color.white.edgesIgnoringSafeArea(.all)
                 
                 VStack(spacing: 20) {
-                    // Category Picker
                     Menu {
                         ForEach(WardrobeCategory.allCases, id: \.self) { category in
                             Button(action: {
@@ -29,17 +39,16 @@ struct WardrobeScreen: View {
                         HStack {
                             Text(selectedCategory.rawValue)
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(.black)
                             Image(systemName: "chevron.down")
-                                .foregroundColor(.white)
+                                .foregroundColor(.gray)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(Color(.systemGray6).opacity(0.2))
+                        .background(Color(.systemGray6))
                         .cornerRadius(8)
                     }
                     
-                    // Items Grid
                     ScrollView {
                         LazyVGrid(columns: [
                             GridItem(.flexible()),
@@ -59,6 +68,7 @@ struct WardrobeScreen: View {
                         }
                         .padding()
                     }
+                    .background(Color.clear)
                 }
                 .padding(.top)
             }
@@ -68,6 +78,7 @@ struct WardrobeScreen: View {
                 AddItemScreen(onItemAdded: { newItem in
                     wardrobeManager.addItem(newItem)
                 })
+                .environmentObject(wardrobeManager)
             }
         }
     }
@@ -116,16 +127,18 @@ struct WardrobeItemCard: View {
     let item: WardrobeItem
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 4) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
+                    .fill(Color(.secondarySystemBackground))
                     .aspectRatio(1, contentMode: .fit)
                 
                 if let image = item.image {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 } else {
                     Image(systemName: item.imageName)
@@ -136,47 +149,41 @@ struct WardrobeItemCard: View {
                 }
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(item.name)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 Text(item.category.rawValue)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
             }
-            .padding(.top, 4)
         }
     }
 }
 
 struct AddItemCard: View {
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 4) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
+                    .fill(Color(.secondarySystemBackground))
                     .aspectRatio(1, contentMode: .fit)
                 
                 Image(systemName: "plus.circle.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 40, height: 40)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color(hex: "fc1657"))
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("Add Item")
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
-                
-                Text("New")
-                    .font(.caption)
-                    .foregroundColor(.gray)
             }
-            .padding(.top, 4)
         }
     }
 }

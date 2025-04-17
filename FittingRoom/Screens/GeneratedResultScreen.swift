@@ -11,27 +11,33 @@ struct GeneratedResultScreen: View {
     @State private var showError = false
     @State private var errorMessage = ""
     
-    let selfie: UIImage
     let items: [WardrobeItem]
     
     var body: some View {
         VStack(spacing: 0) {
             // Generated image area
             ZStack {
-                Color(hex: "1a1a1a")
+                Color(hex: "1d1d1d")
                     .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        Rectangle()
+                            .fill(
+                                Color.white.opacity(0.05)
+                            )
+                            .allowsHitTesting(false)
+                    )
                 
                 if isGenerating {
                     VStack(spacing: 24) {
                         // Loading animation
                         ZStack {
                             Circle()
-                                .stroke(Color.blue.opacity(0.2), lineWidth: 8)
+                                .stroke(Color(hex: "f3c7e1").opacity(0.2), lineWidth: 8)
                                 .frame(width: 80, height: 80)
                             
                             Circle()
                                 .trim(from: 0, to: 0.7)
-                                .stroke(Color.blue, lineWidth: 8)
+                                .stroke(Color(hex: "fc1657"), lineWidth: 8)
                                 .frame(width: 80, height: 80)
                                 .rotationEffect(.degrees(isGenerating ? 360 : 0))
                                 .animation(
@@ -71,7 +77,7 @@ struct GeneratedResultScreen: View {
                                 ForEach(Array(items), id: \.id) { item in
                                     HStack {
                                         Image(systemName: item.imageName)
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(Color(hex: "fc1657"))
                                         
                                         Text(item.name)
                                             .foregroundColor(.white)
@@ -112,7 +118,7 @@ struct GeneratedResultScreen: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(isSaved ? Color.green : Color.blue)
+                        .background(isSaved ? Color.green : Color(hex: "fc1657"))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .disabled(isSaved)
@@ -126,14 +132,14 @@ struct GeneratedResultScreen: View {
                             Text("Share")
                         }
                         .font(.headline)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color(hex: "fc1657"))
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.white)
+                        .background(Color.white.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.blue, lineWidth: 1)
+                                .stroke(Color(hex: "fc1657"), lineWidth: 1)
                         )
                     }
                 }
@@ -199,9 +205,17 @@ struct GeneratedResultScreen: View {
         Task {
             do {
                 let itemImages = items.compactMap { $0.image }
-                let image = try await OpenAIService.shared.generateOutfitImage(selfie: selfie, wardrobeItems: itemImages)
+                // TODO: Update this call to use the Digital Twin instead of the selfie
+                // Temporarily, we might need to pass a placeholder or modify OpenAIService
+                // For now, let's assume it will be handled later or comment it out to compile
+                // let image = try await OpenAIService.shared.generateOutfitImage(selfie: selfie, wardrobeItems: itemImages)
+                
+                // Placeholder image until generation logic is updated
+                let placeholderImage = UIImage(systemName: "photo.artframe") ?? UIImage()
+                
                 await MainActor.run {
-                    generatedImage = image
+                    // generatedImage = image
+                    generatedImage = placeholderImage // Use placeholder
                     isGenerating = false
                 }
             } catch {
@@ -234,7 +248,6 @@ struct ShareSheet: UIViewControllerRepresentable {
 #Preview {
     NavigationView {
         GeneratedResultScreen(
-            selfie: UIImage(systemName: "person.fill")!,
             items: [
                 WardrobeItem(name: "Blue T-Shirt", imageName: "tshirt.fill", category: .top),
                 WardrobeItem(name: "Black Jeans", imageName: "staroflife", category: .bottom)

@@ -1,88 +1,135 @@
 import SwiftUI
+import Supabase
 
 struct AuthScreen: View {
     @Binding var isAuthenticated: Bool
     @State private var email = ""
     @State private var password = ""
-    @EnvironmentObject private var authManager: AuthManager
+    @State private var isLoading = false
+    @State private var errorMessage: String?
     
     var body: some View {
-        VStack(spacing: 30) {
-            Image(systemName: "tshirt.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 100, height: 100)
-                .foregroundColor(.blue)
-                .padding(.top, 50)
-            
-            Text("FittingRoom.ai")
-                .font(.system(size: 36, weight: .bold))
-                .foregroundColor(.primary)
-            
-            Text("Your personal virtual wardrobe")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .padding(.bottom, 30)
-            
-            VStack(spacing: 16) {
-                TextField("Email", text: $email)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                
-                Button(action: {
-                    // For now, just sign in without validation
-                    withAnimation {
-                        authManager.signIn()
-                    }
-                }) {
-                    Text("Sign In")
-                        .font(.headline)
+        NavigationView {
+            ZStack {
+                Color(hex: "1a1a1a").ignoresSafeArea()
+
+                VStack(spacing: 20) {
+                    Image(systemName: "tshirt.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                        .foregroundColor(Color(hex: "ea2190"))
+                        .padding(.top, 30)
+                    
+                    Text("FittingRoom.ai")
+                        .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(8)
+                    
+                    Text("Your personal virtual wardrobe")
+                        .font(.subheadline)
+                        .foregroundColor(Color(hex: "f3c7e1"))
+                        .padding(.bottom, 20)
+                    
+                    VStack(spacing: 16) {
+                        TextField("Email", text: $email)
+                            .padding()
+                            .background(Color(.systemGray5))
+                            .cornerRadius(8)
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .colorScheme(.dark)
+                        
+                        SecureField("Password", text: $password)
+                            .padding()
+                            .background(Color(.systemGray5))
+                            .cornerRadius(8)
+                            .colorScheme(.dark)
+                        
+                        if let errorMessage = errorMessage {
+                            Text(errorMessage)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.top, 5)
+                        }
+
+                        Button(action: {
+                            signIn()
+                        }) {
+                            HStack {
+                                 Spacer()
+                                 if isLoading {
+                                     ProgressView()
+                                         .tint(.white)
+                                 } else {
+                                     Text("Sign In")
+                                         .font(.headline)
+                                 }
+                                 Spacer()
+                             }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(isLoading ? Color.gray : Color.blue)
+                            .cornerRadius(8)
+                        }
+                        .disabled(isLoading)
+                        
+                        NavigationLink(destination: SignUpView()) {
+                            Text("Create Account")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.blue, lineWidth: 1)
+                                )
+                         }
+                    }
+                    .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    Text("By continuing, you agree to our Terms of Service and Privacy Policy")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
                 }
-                
-                Button(action: {
-                    // TODO: Implement sign up navigation
-                }) {
-                    Text("Create Account")
-                        .font(.headline)
-                        .foregroundColor(.blue)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.blue, lineWidth: 1)
-                        )
-                }
+                .padding()
+                .navigationBarHidden(true)
             }
-            .padding(.horizontal)
-            
-            Spacer()
-            
-            // Terms and privacy footer
-            Text("By continuing, you agree to our Terms of Service and Privacy Policy")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-                .padding(.bottom, 20)
         }
-        .padding()
+        .navigationViewStyle(.stack)
+    }
+
+    func signIn() {
+        isLoading = true
+        errorMessage = nil
+        Task {
+            do {
+                let session = try await supabase.auth.signIn(
+                    email: email,
+                    password: password
+                )
+                print("Successfully signed in! User ID: \(session.user.id)")
+                isLoading = false
+
+            } catch {
+                print("Error signing in: \(error.localizedDescription)")
+                await MainActor.run {
+                     errorMessage = error.localizedDescription
+                     isLoading = false
+                 }
+            }
+        }
     }
 }
 
 #Preview {
     AuthScreen(isAuthenticated: .constant(false))
-        .environmentObject(AuthManager())
 } 
